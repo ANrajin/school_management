@@ -1,0 +1,149 @@
+create database sms;
+====================
+
+
+users:
+=======
+create table users (id tinyint unsigned not null auto_increment primary key, name varchar(20) not null, type tinyint unsigned not null unique key);
+
+
+admin:
+======
+create table admin (id int unsigned not null auto_increment primary key, user_name varchar(100) not null, password varchar(32) not null,
+email varchar(40) not null unique key);
+
+alter table admin add(name varchar (50) , phone int not null, picture varchar(4));
+
+
+
+admission :
+===========
+
+alter table admission add(
+ 	session varchar(15),
+	admission_date date,
+ 	adminssion_class varchar(10),
+	certificate varchar(10)not null,
+	name varchar (50) not null,
+ 	present_address varchar(255) not null ,
+ 	gender tinyint not null, 
+	father_name varchar(50) not null,
+ 	mother_name varchar(50) not null, 
+ 	religion tinyint not null,
+ 	email varchar(40) not null unique,
+ 	phone_number varchar(15) not null, 
+	dob date not null, nationality varchar(20) not null,
+ 	blood_group tinyint,
+	parents_monthly_income float(10,2) unsigned not null, 
+	picture varchar (4), remarks varchar(255));
+
+	ALTER TABLE admission add(class_id int unsigned, FOREIGN KEY (class_id) REFERENCES class_info(id));
+
+student :
+===========
+create table student(id int unsigned not null auto_increment primary key, 
+admission_id int unsigned not null,
+name varchar (50) not null,
+ present_address varchar(255) not null ,
+ gender tinyint not null, 
+father_name varchar(50) not null,
+ mother_name varchar(50) not null, 
+ religion tinyint not null,
+ email varchar(40) not null unique key, 
+password varchar(32) not null,
+ phone_number varchar(15) not null,
+ dob date not null, nationality varchar(20) not null, 
+blood_group tinyint,
+parents_monthly_income float(10,2) unsigned not null, picture varchar (4), remarks varchar(255),
+foreign key(admission_id ) references admission(id));
+
+
+
+upozilla : 
+==========
+create table upozilla (id int not null auto_increment primary key, upozilla_name varchar(50),district_id int, foreign key(district_id) references district(id));
+
+
+district : 
+==========
+create table district(id int not null auto_increment primary key, district_name varchar(50),division_id int, foreign key(division_id) references division(id));
+division:
+========
+create table division(id int not null auto_increment primary key, division_name varchar(50));
+
+
+class_info :
+===========
+create table class_info (id int unsigned not null auto_increment primary key, name varchar(15) not null unique key);
+
+
+subjects :
+===========
+create table subjects(id int unsigned not null auto_increment primary key, name varchar(50) not null, subject_code varchar(20) not null, teacher_id int unsigned ,class_id int unsigned,foreign key(teacher_id) references teachers(id), foreign key(class_id) references class_info(id));
+
+
+exam:
+======
+create table exam (id int unsigned not null auto_increment primary key, exam_name varchar(20) not null, date datetime not null, question varchar(4));
+
+alter table exam add(class_id int unsigned,  subject_id int unsigned, foreign key(class_id)
+references class_info(id), foreign key(subject_id) references subjects(id));
+
+
+
+grade:
+======
+create table grade(id int unsigned not null auto_increment primary key, grade tinyint unsigned not null, percent_from tinyint unsigned not null,
+percent_to tinyint unsigned not null);
+
+
+
+result:
+========
+create table result(id int unsigned not null auto_increment primary key, student_id int unsigned not null, exam_id int unsigned not null, subject_id int unsigned not null, full_marks int unsigned not null, 
+obtained_marks int unsigned not null, grade_id int unsigned not null, foreign key(student_id) references student(id), foreign key(exam_id) references exam (id), foreign key(subject_id) references subjects(id),
+foreign key(grade_id) references grade(id));
+
+
+
+assigned_subject :
+================
+create table assigned_subject (id int unsigned not null auto_increment primary key, class_id int unsigned not null, subject_id int unsigned not null, teacher_id int unsigned not null, foreign key (class_id) references 
+class_info(id), foreign key (subject_id) references subjects(id));
+
+
+
+fee type:
+=========
+create table fee_type (id int unsigned not null auto_increment primary key, name varchar(20) not null, fee_amount float(10,2) unsigned not null);
+
+
+student_attendence:
+===================
+create table student_attendence (id int unsigned not null auto_increment primary key, assigned_subject_id int unsigned not null,
+student_id int unsigned not null, date datetime not null, foreign key(assigned_subject_id) references assigned_subject(id),
+foreign key(student_id) references student(id));
+
+
+teachers:
+=========
+create table teachers(id int unsigned not null auto_increment primary key, name varchar(50) not null, designation varchar(20) not null, qualification varchar(50) not null,
+address varchar(200) not null, email varchar(40) not null unique key, phone varchar(20) not null, NID varchar(30) not null, PID varchar(30) not null, father_name varchar(50) not null,
+mother_name varchar(50) not null, nationality varchar(20) not null, blood_group tinyint not null, joining_date datetime not null, salary_id int unsigned not null, salary_account
+varchar(30) not null, subject_id int unsigned not null, remarks varchar(100) not null, foreign key (subject_id) references subjects(id));
+
+
+ALTER TABLE teachers ADD(class_id int unsigned , FOREIGN KEY (class_id) REFERENCES class_info(id));
+alter table teachers add(teacher_pic varchar(4) not null)
+
+
+
+tution fee:
+===========
+create table tution_fee(id int unsigned not null auto_increment primary key, student_id int unsigned not null, class_id int unsigned not null, 
+fee_type_id int unsigned not null, transection_id varchar(50) not null, date datetime not null, foreign key(student_id) references student(id), foreign key(class_id) references class_info(id),
+foreign key(fee_type_id) references fee_type(id), unique key(transection_id));
+
+
+
+
